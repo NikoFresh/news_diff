@@ -16,3 +16,6 @@ def get_news_id(url: str) -> int:
     path: List[str] = [i for i in path if i != '']
     article_id: int = int(path[-1].split('-')[-1])
     return article_id
+
+def add_to_db(id: int, pub_date, title: str, link: str):
+    pass
