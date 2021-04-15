@@ -1,10 +1,8 @@
 from datetime import datetime
 from typing import List
 
-from .db import Session, Articles
-
-from furl import furl
 import arrow
+from furl import furl
 
 
 def get_news_id(url: str) -> int:
