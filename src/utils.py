@@ -1,5 +1,7 @@
 from typing import List
+
 from furl import furl
+
 
 def get_news_id(url: str) -> int:
     '''
@@ -17,5 +19,5 @@ def get_news_id(url: str) -> int:
     article_id: int = int(path[-1].split('-')[-1])
     return article_id
 
-def add_to_db(id: int, pub_date, title: str, link: str):
+def add_to_db(id: int, pub_date, link: str, title: str, summary: str, content: str):
     pass
