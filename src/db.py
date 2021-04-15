@@ -1,21 +1,21 @@
-from sqlalchemy import Column, create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql.sqltypes import DateTime, Integer, String
+from sqlalchemy import exists
 
-Base = declarative_base()
+from .models import Articles, Session
 
-engine = create_engine('sqlite:///news.db', echo = True)
 
-class Articles(Base):
-    __tablename__ = 'articles'
+def is_already_present(id: int) -> bool:
+    '''Check if the article is already in the DB'''
+    session = Session()
+    output = session.query(exists().where(Articles.article_id==id)).scalar()
+    session.close()
+    return output 
 
-    id = Column(Integer, primary_key=True)
-    link = Column(String)
-    title = Column(String)
-    description = Column(String)
-    pubDate = Column(DateTime)
 
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind = engine)
-session = Session()
+def add_to_db(id: int, pub_date, link: str, title: str, summary: str, content: str) -> None:
+    session = Session()
+    new_article = Articles()
+    new_article.article_id, new_article.link, new_article.title, new_article.summary, new_article.content, new_article.pub_date = id, link, title, summary, content, pub_date
+    session.add(new_article)
+    session.commit()
+    session.close()
+
