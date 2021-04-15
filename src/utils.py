@@ -1,6 +1,10 @@
+from datetime import datetime
 from typing import List
 
+from .db import Session, Articles
+
 from furl import furl
+import arrow
 
 
 def get_news_id(url: str) -> int:
@@ -19,5 +23,7 @@ def get_news_id(url: str) -> int:
     article_id: int = int(path[-1].split('-')[-1])
     return article_id
 
-def add_to_db(id: int, pub_date, link: str, title: str, summary: str, content: str):
-    pass
+def convert_date(date: str) -> datetime:
+    '''Convert the input string to a valid Arrow object. Also convert the time to UTC'''
+    date = arrow.get(date, 'ddd, DD MMM YYYY HH:mm:ss Z')
+    return date.to('utc').naive
