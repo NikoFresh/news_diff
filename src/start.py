@@ -1,8 +1,7 @@
 import feedparser
 
 from .db import add_to_db, is_already_present
-from .parser import parse
-from .check_diff import check_diff
+from .utils import check_diff, parse
 
 
 def start(link: str) -> None:
@@ -13,13 +12,14 @@ def start(link: str) -> None:
             already_saved = is_already_present(id=article_id)
             print(already_saved)
             if already_saved:
-                check_diff()
+                # check_diff()
+                pass
             else:
-                add_to_db(id=article_id, 
-                          pub_date=pub_date, 
-                          link=article_link, 
-                          title=title, 
-                          summary=summary, 
+                add_to_db(id=article_id,
+                          pub_date=pub_date,
+                          link=article_link,
+                          title=title,
+                          summary=summary,
                           content=content)
         except:
             pass
