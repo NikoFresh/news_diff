@@ -1,6 +1,7 @@
 import feedparser
+from sqlalchemy.sql.expression import except_
 
-from .db import add_to_db, is_already_present
+from .db import add_to_db, get_article_data
 from .utils import check_diff, parse
 
 
@@ -11,8 +12,17 @@ def start(link: str) -> None:
             article_id, pub_date, article_link, title, summary, content = parse(
                 post=post
             )
-            if is_already_present(id=article_id):
-                diff = check_diff(db_id=article_id, new_data=(title, summary, content))
+            data = get_article_data(id=article_id)
+            if data != None:
+                if data[0] != title:
+                    diff = check_diff(old_text=data[0], new_text=title)
+                    print(diff)
+                if data[1] != summary:
+                    diff = check_diff(old_text=data[1], new_text=summary)
+                    print(diff)
+                if data[2] != content:
+                    diff = check_diff(old_text=data[2], new_text=content)
+                    print(diff)
             else:
                 add_to_db(
                     id=article_id,

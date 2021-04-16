@@ -3,13 +3,14 @@ from sqlalchemy import exists
 from .models import Articles, Session
 
 
-def is_already_present(id: int) -> bool:
-    """Check if the article is already in the DB"""
+def get_article_data(id: int) -> bool or tuple[str]:
+    """Check if the article is already in the DB. If so return the data"""
     session = Session()
-    output = session.query(exists().where(Articles.article_id == id)).scalar()
-    session.close()
-    get_article_data(id)
-    return output
+    entry_exists = session.query(exists().where(Articles.article_id == id)).scalar()
+    if entry_exists:
+        data = session.query(Articles).filter(Articles.article_id == id).one()
+        session.close()
+        return (data.title, data.summary, data.content)
 
 
 def add_to_db(
@@ -28,10 +29,3 @@ def add_to_db(
     session.add(new_article)
     session.commit()
     session.close()
-
-
-def get_article_data(id: int) -> tuple[str]:
-    session = Session()
-    data = session.query(Articles).filter(Articles.article_id == id).one()
-    session.close()
-    return (data.title, data.summary, data.content)
