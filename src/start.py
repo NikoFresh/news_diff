@@ -11,11 +11,8 @@ def start(link: str) -> None:
             article_id, pub_date, article_link, title, summary, content = parse(
                 post=post
             )
-            already_saved = is_already_present(id=article_id)
-            print(already_saved)
-            if already_saved:
-                # check_diff()
-                pass
+            if is_already_present(id=article_id):
+                diff = check_diff(db_id=article_id, new_data=(title, summary, content))
             else:
                 add_to_db(
                     id=article_id,
