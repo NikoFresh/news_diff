@@ -1,10 +1,11 @@
 import feedparser
 
 from .db import add_to_db, get_article_data, update_data
-from .utils import check_diff, parse
+from .utils import check_diff, generate_img, parse
 
 
 def start(link: str) -> None:
+    print("starting...")
     posts = feedparser.parse(link).entries
     for post in posts:
         try:
@@ -16,12 +17,18 @@ def start(link: str) -> None:
                 changes: int = 0
                 if data[0] != title:
                     diff = check_diff(old_text=data[0], new_text=title)
+                    print(diff)
+                    generate_img(diff)
                     changes += 1
                 if data[1] != summary:
                     diff = check_diff(old_text=data[1], new_text=summary)
+                    print(diff)
+                    generate_img(diff)
                     changes += 1
                 if data[2] != content:
                     diff = check_diff(old_text=data[2], new_text=content)
+                    print(diff)
+                    generate_img(diff)
                     changes += 1
                 if changes > 0:
                     update_data(
@@ -36,5 +43,6 @@ def start(link: str) -> None:
                     summary=summary,
                     content=content,
                 )
-        except:
-            pass
+        except Exception as e:
+            print(e)
+    print("completed")

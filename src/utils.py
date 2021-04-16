@@ -3,6 +3,7 @@ from typing import List
 
 import arrow
 import diff_match_patch as dmp_module
+import imgkit
 import requests
 from bs4 import BeautifulSoup
 from furl import furl
@@ -59,3 +60,8 @@ def check_diff(old_text: str, new_text: str) -> str:
     diff = dmp.diff_main(old_text, new_text)
     dmp.diff_cleanupSemantic(diff)
     return dmp.diff_prettyHtml(diff)
+
+
+def generate_img(text: str) -> None:
+    html: str = f'<div style="font-size: 20px; margin: 5px">{text}</div>'
+    imgkit.from_string(html, "out.png")
