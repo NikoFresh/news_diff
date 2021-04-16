@@ -29,3 +29,13 @@ def add_to_db(
     session.add(new_article)
     session.commit()
     session.close()
+
+
+def update_data(id: int, title: str, summary: str, content: str) -> None:
+    session = Session()
+    old = session.query(Articles).filter(Articles.article_id == id).one()
+    old.title = title
+    old.summary = summary
+    old.content = content
+    session.commit()
+    session.close()
