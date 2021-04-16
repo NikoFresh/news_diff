@@ -2,12 +2,10 @@ from datetime import datetime
 from typing import List
 
 import arrow
+import diff_match_patch as dmp_module
 import requests
 from bs4 import BeautifulSoup
-
 from furl import furl
-
-from .db import get_article_data
 
 
 def get_news_id(url: str) -> int:
@@ -54,3 +52,10 @@ def parse(post) -> List[str]:
     article_id: int = get_news_id(post.link)
     title, summary, content = scrape_article(link=link)
     return article_id, pub_date, link, title, summary, content
+
+
+def check_diff(old_text: str, new_text: str) -> str:
+    dmp = dmp_module.diff_match_patch()
+    diff = dmp.diff_main(old_text, new_text)
+    dmp.diff_cleanupSemantic(diff)
+    return dmp.diff_prettyHtml(diff)
