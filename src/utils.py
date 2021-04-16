@@ -4,7 +4,7 @@ from typing import List
 import arrow
 import requests
 from bs4 import BeautifulSoup
-from difflib import SequenceMatcher
+
 from furl import furl
 
 from .db import get_article_data
@@ -38,10 +38,8 @@ def scrape_article(link: str) -> str:
     r = requests.get(link).content
     soup = BeautifulSoup(r, features="html.parser")
     # The article contains some link to other news inside <section> tags. Remove them
-    [
+    for tag in soup.find_all("section", attrs={"class": "inline-article"}):
         tag.decompose()
-        for tag in soup.find_all("section", attrs={"class": "inline-article"})
-    ]
     title: str = soup.find("h1", attrs={"class": "story__title"}).get_text(strip=True)
     summary: str = soup.find("div", attrs={"class": "story__summary"}).get_text(
         strip=True
@@ -56,19 +54,3 @@ def parse(post) -> List[str]:
     article_id: int = get_news_id(post.link)
     title, summary, content = scrape_article(link=link)
     return article_id, pub_date, link, title, summary, content
-
-
-def check_diff(
-    db_id: int,
-    new_data: tuple[
-        str,
-        str,
-        str,
-    ],
-) -> tuple[str, int, int, int, int]:
-    old_data = get_article_data(db_id)
-    for i, old_el in enumerate(old_data):
-        new_el = new_data[i]
-        diff = SequenceMatcher(None, old_el, new_el)
-        if diff.ratio() != 1.0:
-            return diff.get_opcodes()
