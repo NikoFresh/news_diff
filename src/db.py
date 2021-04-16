@@ -8,6 +8,7 @@ def is_already_present(id: int) -> bool:
     session = Session()
     output = session.query(exists().where(Articles.article_id == id)).scalar()
     session.close()
+    get_article_data(id)
     return output
 
 
@@ -27,3 +28,10 @@ def add_to_db(
     session.add(new_article)
     session.commit()
     session.close()
+
+
+def get_article_data(id: int) -> tuple[str]:
+    session = Session()
+    data = session.query(Articles).filter(Articles.article_id == id).one()
+    session.close()
+    return (data.title, data.summary, data.content)
