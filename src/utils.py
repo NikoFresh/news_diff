@@ -5,7 +5,9 @@ import arrow
 import diff_match_patch as dmp_module
 import imgkit
 import requests
+import telepot
 from bs4 import BeautifulSoup
+from config import Config
 from furl import furl
 
 
@@ -63,5 +65,10 @@ def check_diff(old_text: str, new_text: str) -> str:
 
 
 def generate_img(text: str) -> None:
-    html: str = f'<div style="font-size: 20px; margin: 5px">{text}</div>'
-    imgkit.from_string(html, "out.png")
+    imgkit.from_string(Config.HTML_TEMPLATE.format(text), "tmp.png")
+
+
+def send_img(desc: str) -> None:
+    bot = telepot.Bot(Config.TELEGRAM_TOKEN)
+    with open("tmp.png", "rb") as img:
+        bot.sendPhoto(Config.CHAT_ID, photo=img, caption=desc)

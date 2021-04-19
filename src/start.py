@@ -1,11 +1,12 @@
 import feedparser
+from simplediff import html_diff
 
 from .db import add_to_db, get_article_data, update_data
-from .utils import check_diff, generate_img, parse
+from .utils import check_diff, generate_img, parse, send_img
 
 
 def start(link: str) -> None:
-    print("starting...")
+    print("\n\nstarting...")
     posts = feedparser.parse(link).entries
     for post in posts:
         try:
@@ -16,25 +17,26 @@ def start(link: str) -> None:
             if data != None:
                 changes: int = 0
                 if data[0] != title:
-                    diff = check_diff(old_text=data[0], new_text=title)
-                    print(diff)
+                    diff: str = check_diff(data[0, title])
                     generate_img(diff)
+                    send_img(desc=f"Titolo {article_link}")
                     changes += 1
                 if data[1] != summary:
-                    diff = check_diff(old_text=data[1], new_text=summary)
-                    print(diff)
+                    diff: str = check_diff(data[1], summary)
                     generate_img(diff)
+                    send_img(desc=f"Sottotitolo {article_link}")
                     changes += 1
                 if data[2] != content:
-                    diff = check_diff(old_text=data[2], new_text=content)
-                    print(diff)
+                    diff: str = check_diff(data[2], summary)
                     generate_img(diff)
+                    send_img(desc=f"Articolo {article_link}")
                     changes += 1
                 if changes > 0:
                     update_data(
                         id=article_id, title=title, summary=summary, content=content
                     )
             else:
+                print("add")
                 add_to_db(
                     id=article_id,
                     pub_date=pub_date,
@@ -45,4 +47,4 @@ def start(link: str) -> None:
                 )
         except Exception as e:
             print(e)
-    print("completed")
+    print("\ncompleted")
