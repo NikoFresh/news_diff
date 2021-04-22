@@ -3,7 +3,7 @@ from sqlalchemy import exists
 from .models import Articles, Session
 
 
-def get_article_data(id: int) -> bool or tuple[str]:
+def get_article_data(id: str) -> bool or tuple[str]:
     """Check if the article is already in the DB. If so return the data"""
     session = Session()
     entry_exists = session.query(exists().where(Articles.article_id == id)).scalar()
@@ -14,7 +14,7 @@ def get_article_data(id: int) -> bool or tuple[str]:
 
 
 def add_to_db(
-    id: int, pub_date, link: str, title: str, summary: str, content: str
+    id: str, pub_date, link: str, title: str, summary: str, content: str
 ) -> None:
     session = Session()
     new_article = Articles()
@@ -31,7 +31,7 @@ def add_to_db(
     session.close()
 
 
-def update_data(id: int, title: str, summary: str, content: str) -> None:
+def update_data(id: str, title: str, summary: str, content: str) -> None:
     session = Session()
     old = session.query(Articles).filter(Articles.article_id == id).one()
     old.title = title
