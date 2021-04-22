@@ -1,4 +1,5 @@
 import feedparser
+from furl import furl
 
 from .db import add_to_db, get_article_data, update_data
 from .utils import check_diff, generate_img, parse, send_img
@@ -9,6 +10,17 @@ def start(link: str) -> None:
     posts = feedparser.parse(link).entries
     for post in posts:
         try:
+
+            # The RSS feed contains some extra links to external parts of the site that don't contains
+            # A summary. Do not get the data from them
+            # Eg: video.correre.it or corriere.it/economia/..
+            f = furl(post.link)
+            if any(
+                x in f.path.segments
+                for x in ["economia", "spettacoli", "motori", "cook", 'lodicoalcorrere', 'scuola']
+            ) or any(x in f.host for x in ["motori", "video"]):
+                continue
+
             article_id, pub_date, article_link, title, summary = parse(post=post)
             data = get_article_data(id=article_id)
             if data != None:
