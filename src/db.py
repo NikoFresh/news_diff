@@ -1,37 +1,29 @@
-from sqlalchemy import exists
+from pony.orm import db_session, select, commit
 
-from .models import Articles, Session
+from .models import Articles
 
 
+@db_session
 def get_article_data(id: str) -> bool or tuple[str]:
     """Check if the article is already in the DB. If so return the data"""
-    session = Session()
-    entry_exists = session.query(exists().where(Articles.article_id == id)).scalar()
+    entry_exists = select(c for c in Articles if c.article_id == id).exists()
+    print("exists: ", entry_exists)
     if entry_exists:
-        data = session.query(Articles).filter(Articles.article_id == id).one()
-        session.close()
+        data = select(c for c in Articles if c.article_id == id).first()
         return (data.title, data.summary)
 
 
+@db_session
 def add_to_db(id: str, pub_date, link: str, title: str, summary: str) -> None:
-    session = Session()
-    new_article = Articles()
-    (
-        new_article.article_id,
-        new_article.link,
-        new_article.title,
-        new_article.summary,
-        new_article.pub_date,
-    ) = (id, link, title, summary, pub_date)
-    session.add(new_article)
-    session.commit()
-    session.close()
+    new_article = Articles(
+        article_id=id, pub_date=pub_date, link=link, title=title, summary=summary
+    )
+    commit()
 
 
+@db_session
 def update_data(id: str, title: str, summary: str) -> None:
-    session = Session()
-    old = session.query(Articles).filter(Articles.article_id == id).one()
-    old.title = title
-    old.summary = summary
-    session.commit()
-    session.close()
+    data = select(c for c in Articles if c.article_id == id).first()
+    data.title = title
+    data.summary = summary
+    commit()

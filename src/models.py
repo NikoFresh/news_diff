@@ -1,23 +1,18 @@
-from sqlalchemy import Column, create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql.sqltypes import DateTime, Integer, String
+from pony.orm import Database, Required, PrimaryKey
+from datetime import datetime
 
-Base = declarative_base()
-
-engine = create_engine("sqlite:///news.db")
+db = Database()
 
 
-class Articles(Base):
-    __tablename__ = "articles"
-
-    id = Column("id", Integer, primary_key=True, autoincrement=True)
-    article_id = Column("article_id", String, unique=True)
-    link = Column("link", String)
-    title = Column("title", String)
-    summary = Column("summary", String)
-    pub_date = Column("pub_date", DateTime)
+class Articles(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    article_id = Required(str, unique=True)
+    pub_date = Required(datetime)
+    link = Required(str)
+    title = Required(str)
+    summary = Required(str)
 
 
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
+def db_setup():
+    db.bind(provider="sqlite", filename="../news.db", create_db=True)
+    db.generate_mapping(create_tables=True)
