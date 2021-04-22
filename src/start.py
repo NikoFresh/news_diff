@@ -21,7 +21,9 @@ def start(link: str) -> None:
             ) or any(x in f.host for x in ["motori", "video"]):
                 continue
 
+            # Get the current data from the website
             article_id, pub_date, article_link, title, summary = parse(post=post)
+            # Check if the articles is already in the DB. If so, get the data
             data = get_article_data(id=article_id)
             if data != None:
                 changes: int = 0
@@ -35,10 +37,11 @@ def start(link: str) -> None:
                     generate_img(diff)
                     send_img(desc=f"Sottotitolo {article_link}")
                     changes += 1
+                # Update the data only if there is any change
                 if changes > 0:
                     update_data(id=article_id, title=title, summary=summary)
             else:
-                print("add")
+                # Add the article to the db
                 add_to_db(
                     id=article_id,
                     pub_date=pub_date,

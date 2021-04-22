@@ -41,6 +41,7 @@ def scrape_article(link: str) -> str:
 
 
 def parse(post) -> List[str]:
+    """Return the current data of the article"""
     link: str = post.link
     pub_date = convert_date(post.published)
     article_id: str = get_news_id(post.link)
@@ -49,6 +50,7 @@ def parse(post) -> List[str]:
 
 
 def check_diff(old_text: str, new_text: str) -> str:
+    """Check the differences between the saved version and the current version"""
     dmp = dmp_module.diff_match_patch()
     diff = dmp.diff_main(old_text, new_text)
     dmp.diff_cleanupSemantic(diff)
@@ -56,10 +58,12 @@ def check_diff(old_text: str, new_text: str) -> str:
 
 
 def generate_img(text: str) -> None:
+    """Generate an image with the changes and save in a temporary file"""
     imgkit.from_string(Config.HTML_TEMPLATE.format(text), "tmp.png")
 
 
 def send_img(desc: str) -> None:
+    """Send the image to a Telegram channel"""
     bot = telepot.Bot(Config.TELEGRAM_TOKEN)
     with open("tmp.png", "rb") as img:
         bot.sendPhoto(Config.CHAT_ID, photo=img, caption=desc)

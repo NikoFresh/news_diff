@@ -1,8 +1,8 @@
 import asyncio
 
-from src.start import start
-from src.models import db_setup
 from config import Config
+from src.models import db_setup
+from src.start import start
 
 
 async def main() -> None:
