@@ -16,7 +16,6 @@ class Articles(Base):
     link = Column("link", String)
     title = Column("title", String)
     summary = Column("summary", String)
-    content = Column("content", String)
     pub_date = Column("pub_date", DateTime)
 
 

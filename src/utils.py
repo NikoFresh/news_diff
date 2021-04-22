@@ -37,16 +37,15 @@ def scrape_article(link: str) -> str:
     summary: str = soup.find("h2", attrs={"class": "article-subtitle"}).get_text(
         strip=True
     )
-    content: str = ""
-    return title, summary, content
+    return title, summary
 
 
 def parse(post) -> List[str]:
     link: str = post.link
     pub_date = convert_date(post.published)
     article_id: str = get_news_id(post.link)
-    title, summary, content = scrape_article(link=link)
-    return article_id, pub_date, link, title, summary, content
+    title, summary = scrape_article(link=link)
+    return article_id, pub_date, link, title, summary
 
 
 def check_diff(old_text: str, new_text: str) -> str:
