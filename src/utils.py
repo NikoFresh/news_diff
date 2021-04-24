@@ -59,11 +59,12 @@ def check_diff(old_text: str, new_text: str) -> str:
 
 def generate_img(text: str) -> None:
     """Generate an image with the changes and save in a temporary file"""
-    imgkit.from_string(Config.HTML_TEMPLATE.format(text), "tmp.png")
+    options = {"width": 720, "minimum-font-size": 28}
+    imgkit.from_string(text, "tmp.png", options=options)
 
 
 def send_img(desc: str) -> None:
     """Send the image to a Telegram channel"""
     bot = telepot.Bot(Config.TELEGRAM_TOKEN)
     with open("tmp.png", "rb") as img:
-        bot.sendPhoto(Config.CHAT_ID, photo=img, caption=desc)
+        bot.sendPhoto(Config.CHAT_ID, photo=img, caption=desc, parse_mode="HTML")

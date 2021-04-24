@@ -26,21 +26,24 @@ def start(link: str) -> None:
             # Check if the articles is already in the DB. If so, get the data
             data = get_article_data(id=article_id)
             if data != None:
+                print('check')
                 changes: int = 0
                 if data[0] != title:
                     diff: str = check_diff(data[0, title])
                     generate_img(diff)
-                    send_img(desc=f"Titolo {article_link}")
+                    send_img(desc=f'Titolo\n<a href="{article_link}">{title}</a>')
                     changes += 1
                 if data[1] != summary:
                     diff: str = check_diff(data[1], summary)
+                    print(diff)
                     generate_img(diff)
-                    send_img(desc=f"Sottotitolo {article_link}")
+                    send_img(desc=f'Sottotitolo\n<a href="{article_link}">{title}</a>')
                     changes += 1
                 # Update the data only if there is any change
                 if changes > 0:
                     update_data(id=article_id, title=title, summary=summary)
             else:
+                print('add')
                 # Add the article to the db
                 add_to_db(
                     id=article_id,
