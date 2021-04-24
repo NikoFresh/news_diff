@@ -17,5 +17,5 @@ class Articles(db.Entity):
 
 def db_setup():
     """Connect to the db and create it if it doesn't already exists"""
-    db.bind(provider="postgres", host=Config.DB_URL, sslmode="require")
+    db.bind(provider="postgres", dns=Config.DB_URL, sslmode="require")
     db.generate_mapping(create_tables=True)
