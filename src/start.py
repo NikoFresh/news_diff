@@ -1,4 +1,7 @@
+import logging
+
 import feedparser
+from config import Config
 from furl import furl
 
 from .db import add_to_db, get_article_data, update_data
@@ -6,7 +9,7 @@ from .utils import check_diff, generate_img, parse, send_img
 
 
 def start(link: str) -> None:
-    print("\n\nstarting...")
+    logging.info('Starting...')
     posts = feedparser.parse(link).entries
     for post in posts:
         try:
@@ -26,16 +29,17 @@ def start(link: str) -> None:
             # Check if the articles is already in the DB. If so, get the data
             data = get_article_data(id=article_id)
             if data != None:
-                print('check')
+                logging.debug(f'Checking {article_id}')
                 changes: int = 0
                 if data[0] != title:
+                    logging.debug(f'Change in {article_id} title')
                     diff: str = check_diff(data[0, title])
                     generate_img(diff)
                     send_img(desc=f'Titolo\n<a href="{article_link}">{title}</a>')
                     changes += 1
                 if data[1] != summary:
+                    logging.debug(f'Change in {article_id} summary')
                     diff: str = check_diff(data[1], summary)
-                    print(diff)
                     generate_img(diff)
                     send_img(desc=f'Sottotitolo\n<a href="{article_link}">{title}</a>')
                     changes += 1
@@ -43,7 +47,7 @@ def start(link: str) -> None:
                 if changes > 0:
                     update_data(id=article_id, title=title, summary=summary)
             else:
-                print('add')
+                logging.debug(f'Adding {article_id} to db')
                 # Add the article to the db
                 add_to_db(
                     id=article_id,
@@ -52,6 +56,8 @@ def start(link: str) -> None:
                     title=title,
                     summary=summary,
                 )
-        except Exception as e:
-            print(e)
-    print("\ncompleted")
+        except AttributeError:
+            logging.debug(f'The page doesn\'t have the content')
+        except Exception:
+            logging.error('Error, skipping this URL')
+    logging.info(f'Completed. Running again in {Config.sleep_time}')
