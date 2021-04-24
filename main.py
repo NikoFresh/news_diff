@@ -6,7 +6,7 @@ from src.models import db_setup
 from src.start import start
 
 logging.basicConfig(
-    level="INFO", format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=Config.LOG_LEVEL, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 
 
