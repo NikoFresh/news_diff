@@ -33,7 +33,7 @@ def start(link: str) -> None:
                 changes: int = 0
                 if data[0] != title:
                     logging.info(f'Change in {article_id} title')
-                    diff: str = check_diff(data[0, title])
+                    diff: str = check_diff(data[0], title)
                     logging.info('Sending image...')
                     generate_img(diff)
                     send_img(desc=f'Titolo\n<a href="{article_link}">{title}</a>')
