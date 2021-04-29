@@ -29,16 +29,16 @@ def start(link: str) -> None:
             # Check if the articles is already in the DB. If so, get the data
             data = get_article_data(id=article_id)
             if data != None:
-                logging.debug(f'Checking {article_id}')
+                logging.info(f'Checking {article_id}')
                 changes: int = 0
                 if data[0] != title:
-                    logging.debug(f'Change in {article_id} title')
+                    logging.info(f'Change in {article_id} title')
                     diff: str = check_diff(data[0, title])
                     generate_img(diff)
                     send_img(desc=f'Titolo\n<a href="{article_link}">{title}</a>')
                     changes += 1
                 if data[1] != summary:
-                    logging.debug(f'Change in {article_id} summary')
+                    logging.info(f'Change in {article_id} summary')
                     diff: str = check_diff(data[1], summary)
                     generate_img(diff)
                     send_img(desc=f'Sottotitolo\n<a href="{article_link}">{title}</a>')
@@ -47,7 +47,7 @@ def start(link: str) -> None:
                 if changes > 0:
                     update_data(id=article_id, title=title, summary=summary)
             else:
-                logging.debug(f'Adding {article_id} to db')
+                logging.info(f'Adding {article_id} to db')
                 # Add the article to the db
                 add_to_db(
                     id=article_id,
