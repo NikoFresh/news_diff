@@ -34,14 +34,18 @@ def start(link: str) -> None:
                 if data[0] != title:
                     logging.info(f'Change in {article_id} title')
                     diff: str = check_diff(data[0, title])
+                    logging.info('Sending image...')
                     generate_img(diff)
                     send_img(desc=f'Titolo\n<a href="{article_link}">{title}</a>')
+                    logging.info('Image sent')
                     changes += 1
                 if data[1] != summary:
                     logging.info(f'Change in {article_id} summary')
                     diff: str = check_diff(data[1], summary)
+                    logging.info('Sending image...')
                     generate_img(diff)
                     send_img(desc=f'Sottotitolo\n<a href="{article_link}">{title}</a>')
+                    logging.info('Image sent')
                     changes += 1
                 # Update the data only if there is any change
                 if changes > 0:
