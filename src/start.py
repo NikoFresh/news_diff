@@ -62,6 +62,6 @@ def start(link: str) -> None:
                 )
         except AttributeError:
             logging.debug(f'The page doesn\'t have the content')
-        except Exception:
-            logging.error('Error, skipping this URL')
+        #except Exception:
+        #    logging.error('Error, skipping this URL')
     logging.info(f'Completed. Running again in {Config.sleep_time}')
