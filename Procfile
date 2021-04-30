@@ -1,1 +1,0 @@
-hi: python3 main.py
