@@ -29,25 +29,29 @@ def start(link: str) -> None:
             # Check if the articles is already in the DB. If so, get the data
             data = get_article_data(id=article_id)
             if data != None:
-                logging.debug(f'Checking {article_id}')
+                logging.info(f'Checking {article_id}')
                 changes: int = 0
                 if data[0] != title:
-                    logging.debug(f'Change in {article_id} title')
-                    diff: str = check_diff(data[0, title])
+                    logging.info(f'Change in {article_id} title')
+                    diff: str = check_diff(data[0], title)
+                    logging.info('Sending image...')
                     generate_img(diff)
                     send_img(desc=f'Titolo\n<a href="{article_link}">{title}</a>')
+                    logging.info('Image sent')
                     changes += 1
                 if data[1] != summary:
-                    logging.debug(f'Change in {article_id} summary')
+                    logging.info(f'Change in {article_id} summary')
                     diff: str = check_diff(data[1], summary)
+                    logging.info('Sending image...')
                     generate_img(diff)
                     send_img(desc=f'Sottotitolo\n<a href="{article_link}">{title}</a>')
+                    logging.info('Image sent')
                     changes += 1
                 # Update the data only if there is any change
                 if changes > 0:
                     update_data(id=article_id, title=title, summary=summary)
             else:
-                logging.debug(f'Adding {article_id} to db')
+                logging.info(f'Adding {article_id} to db')
                 # Add the article to the db
                 add_to_db(
                     id=article_id,
@@ -58,6 +62,6 @@ def start(link: str) -> None:
                 )
         except AttributeError:
             logging.debug(f'The page doesn\'t have the content')
-        except Exception:
-            logging.error('Error, skipping this URL')
+        #except Exception:
+        #    logging.error('Error, skipping this URL')
     logging.info(f'Completed. Running again in {Config.sleep_time}')

@@ -18,11 +18,19 @@ class Articles(db.Entity):
 
 def db_setup():
     """Connect to the db and create it if it doesn't already exists"""
+    data = Config.DB_URL.split("/")
+    database = data[-1]
+    credentials = data[2].split("@")
+    host, port = credentials[-1].split(":")
+    user, password = credentials[0].split(":")
+
     db.bind(
-        provider="mysql",
-        host=Config.DB_HOST,
-        user=Config.DB_USER,
-        passwd=Config.DB_PWD,
-        db=Config.DB,
+        provider="postgres",
+        user=user,
+        password=password,
+        host=host,
+        database=database,
+        port=port,
+        sslmode="require",
     )
     db.generate_mapping(create_tables=True)
