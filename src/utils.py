@@ -25,7 +25,7 @@ def get_news_id(url: str) -> int:
 
 def convert_date(date: str) -> datetime:
     """Convert the input string to a valid Arrow object. Also convert the time to UTC"""
-    date = arrow.get(date, "ddd, DD MMM YYYY HH:mm:ss Z")
+    date = arrow.get(date, "ddd, D MMM YYYY HH:mm:ss Z")
     return date.to("utc").naive
 
 
