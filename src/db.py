@@ -1,10 +1,12 @@
+from typing import Tuple
+
 from pony.orm import commit, db_session, select
 
 from .models import Articles
 
 
 @db_session
-def get_article_data(id: str) -> bool or tuple[str]:
+def get_article_data(id: str) -> Tuple[str]:
     """Check if the article is already in the DB. If so return the data"""
     entry_exists = select(c for c in Articles if c.article_id == id).exists()
     if entry_exists:

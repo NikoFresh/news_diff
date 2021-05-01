@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 class Config:
     load_dotenv(".env")
 
-    sleep_time: int = 300
+    SLEEP_TIME: int = 300
     LOG_LEVEL: str = os.getenv("LOG_LEVEL")
     DB_URL: str = os.getenv("DATABASE_URL")
     TELEGRAM_TOKEN: str = os.getenv("TELEGRAM_TOKEN")

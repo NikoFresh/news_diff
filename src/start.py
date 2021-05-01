@@ -9,11 +9,10 @@ from .utils import check_diff, generate_img, parse, send_img
 
 
 def start(link: str) -> None:
-    logging.info('Starting...')
+    logging.info('\nStarting...')
     posts = feedparser.parse(link).entries
     for post in posts:
         try:
-
             # The RSS feed contains some extra links to external parts of the site that don't contains
             # A summary. Do not get the data from them
             # Eg: video.correre.it or corriere.it/economia/..
@@ -31,28 +30,26 @@ def start(link: str) -> None:
             if data != None:
                 logging.info(f'Checking {article_id}')
                 changes: int = 0
+                # If there has been a change in either the title or the summary, generate the image 
+                # and send it to Telegram
                 if data[0] != title:
                     logging.info(f'Change in {article_id} title')
                     diff: str = check_diff(data[0], title)
-                    logging.info('Sending image...')
                     generate_img(diff)
                     send_img(desc=f'Titolo\n<a href="{article_link}">{title}</a>')
-                    logging.info('Image sent')
                     changes += 1
                 if data[1] != summary:
                     logging.info(f'Change in {article_id} summary')
                     diff: str = check_diff(data[1], summary)
-                    logging.info('Sending image...')
                     generate_img(diff)
                     send_img(desc=f'Sottotitolo\n<a href="{article_link}">{title}</a>')
-                    logging.info('Image sent')
                     changes += 1
                 # Update the data only if there is any change
                 if changes > 0:
                     update_data(id=article_id, title=title, summary=summary)
             else:
-                logging.info(f'Adding {article_id} to db')
                 # Add the article to the db
+                logging.info(f'Adding {article_id} to db')
                 add_to_db(
                     id=article_id,
                     pub_date=pub_date,
@@ -62,6 +59,6 @@ def start(link: str) -> None:
                 )
         except AttributeError:
             logging.debug(f'The page doesn\'t have the content')
-        #except Exception:
-        #    logging.error('Error, skipping this URL')
-    logging.info(f'Completed. Running again in {Config.sleep_time}')
+        except Exception:
+            logging.error('Error, skipping this URL')
+    logging.info(f'Completed. Running again in {Config.SLEEP_TIME}s')

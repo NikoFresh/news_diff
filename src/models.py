@@ -1,5 +1,4 @@
 from datetime import datetime
-from threading import Condition
 
 from config import Config
 from pony.orm import Database, PrimaryKey, Required

@@ -14,7 +14,7 @@ async def main() -> None:
     db_setup()
     while True:
         start(Config.RSS_URL)
-        await asyncio.sleep(Config.sleep_time)
+        await asyncio.sleep(Config.SLEEP_TIME)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Tuple
 
 import arrow
 import diff_match_patch as dmp_module
@@ -15,7 +15,7 @@ def get_news_id(url: str) -> int:
     """
     Get the URL of the article and return an article id
     Currently it takes the 9-digits number at the end of the URL
-    Eg: link.com/path/a_news-123456789 -> return 123456789
+    Eg: link.com/path/a_news-12a3v-45sv6-7sd89 -> return 12a3v45sv67sd89
     """
     f = furl(url)
     path: List[str] = f.path.segments
@@ -29,7 +29,7 @@ def convert_date(date: str) -> datetime:
     return date.to("utc").naive
 
 
-def scrape_article(link: str) -> str:
+def scrape_article(link: str) -> Tuple[str]:
     """Get all the data about the articles"""
     r = requests.get(link).content
     soup = BeautifulSoup(r, features="html.parser")
@@ -37,16 +37,16 @@ def scrape_article(link: str) -> str:
     summary: str = soup.find("h2", attrs={"class": "article-subtitle"}).get_text(
         strip=True
     )
-    return title, summary
+    return (title, summary)
 
 
-def parse(post) -> List[str]:
+def parse(post) -> Tuple[str]:
     """Return the current data of the article"""
     link: str = post.link
     pub_date = convert_date(post.published)
     article_id: str = get_news_id(post.link)
     title, summary = scrape_article(link=link)
-    return article_id, pub_date, link, title, summary
+    return (article_id, pub_date, link, title, summary)
 
 
 def check_diff(old_text: str, new_text: str) -> str:
